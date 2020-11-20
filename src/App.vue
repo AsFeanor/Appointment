@@ -1,32 +1,62 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+    <Header></Header>
+    <transition name="fade" mode="out-in">
     <router-view/>
+    </transition>
   </div>
 </template>
 
+<script>
+import Header from "@/components/Header.vue";
+
+export default {
+  components:{
+    Header
+  },
+  created(){
+    this.$store.dispatch("initAuth")
+  }
+}
+</script>
+
+<style src="cxlt-vue2-toastr/dist/css/cxlt-vue2-toastr.css"/>
+
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+.fade-enter {
+  opacity: 0;
 }
 
-#nav {
-  padding: 30px;
+.fade-enter-active {
+  animation: fade-in 0.5s ease-out forwards;
+  transition: opacity 0.25s;
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+.fade-leave {
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+.fade-leave-active {
+  animation: fade-out 0.5s ease-out forwards;
+  transition: opacity 0.5s;
+  opacity: 0;
+  position: absolute;
+}
+
+@keyframes fade-in {
+  from {
+    transform: translateY(20px);
+  }
+  to {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes fade-out {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(20px);
+  }
 }
 </style>
