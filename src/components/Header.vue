@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark shadow mb-5">
-    <a class="navbar-brand" href="#">Appointment</a>
+    <a class="navbar-brand" href="#">Iceberg Digital - Schedule</a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
         <router-link tag="li" to="/" class="nav-item"><a class="nav-link" href="#">Appointments</a></router-link>

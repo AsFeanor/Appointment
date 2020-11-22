@@ -31,9 +31,9 @@ export default new Vuex.Store({
       if (jwtToken && user_id) {
         commit('setToken', jwtToken);
         commit('setID', user_id);
-        // router.push('/').catch(()=>{});
+        router.push('/').catch(()=>{});
       }else {
-        // router.push('/login').catch(()=>{});
+        router.push('/login').catch(()=>{});
         return false;
       }
     },

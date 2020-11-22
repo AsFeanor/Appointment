@@ -1,35 +1,22 @@
 <template>
   <div class="appointment-list">
     <div class="container">
-      <div class="row row-striped" style="border: 1px solid #6c757d" v-for="appointment in appointments" :key="appointment.appointment_id">
+      <div class="row row-striped" v-for="appointment in sortedAppointments" :key="appointment.appointment_id">
         <div class="col-2 text-right">
           <h1 class="display-4"><span class="badge badge-secondary">{{ onlyDayFormat(appointment.appointment_time_start) }}</span></h1>
-          <h2 class="text-uppercase">{{ onlyMonthFormat(appointment.appointment_time_start) }}</h2>
+          <h2 class="text-uppercase text-color">{{ onlyMonthFormat(appointment.appointment_time_start) }}</h2>
         </div>
         <div class="col-10">
-          <h3 class="text-uppercase"><strong>{{ appointment.title }}</strong></h3>
-          <ul class="list-inline">
-            <li class="list-inline-item"><i class="fa fa-calendar-o" aria-hidden="true"></i> {{ dayNameFormat(appointment.appointment_time_start) }}</li>
-            <li class="list-inline-item"><i class="fa fa-clock-o" aria-hidden="true"></i> {{ hoursAndMinutesFormat(appointment.appointment_time_start) }} - {{ hoursAndMinutesFormat(appointment.appointment_time_end) }}</li>
-            <li class="list-inline-item"><i class="fa fa-location-arrow" aria-hidden="true"></i> Cafe</li>
-            <div class="btn-group dropright">
-              <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Customer Info
-              </button>
-              <div class="dropdown-menu">
-                <!-- Dropdown menu links -->
-                <a class="dropdown-item" href="#">{{ appointment.customer_name }}</a>
-                <a class="dropdown-item" href="#">{{ appointment.customer_surname }}</a>
-                <a class="dropdown-item" href="#">{{ appointment.customer_email }}</a>
-                <a class="dropdown-item" href="#">{{ appointment.customer_phone }}</a>
-              </div>
-            </div>
+          <h3 class="text-uppercase text-color"><strong><router-link :to="`appointment/${appointment.appointment_id}`"><a href="" >{{ appointment.title }}</a></router-link></strong></h3>
+          <ul class="list-inline text-color">
+            <li class="list-inline-item"><i class="fa fa-calendar-o icons" aria-hidden="true"></i> {{ dayNameFormat(appointment.appointment_time_start) }}</li>
+            <li class="list-inline-item"><i class="fa fa-clock-o icons" aria-hidden="true"></i> {{ hoursAndMinutesFormat(appointment.appointment_time_start) }} - {{ hoursAndMinutesFormat(appointment.appointment_time_end) }}</li>
+            <li class="list-inline-item"><i class="fa fa-user icons icons" aria-hidden="true"></i> {{ appointment.customer_name }}</li>
+            <li class="list-inline-item"><i class="fa fa-location-arrow icons" aria-hidden="true"></i> {{ appointment.location }}</li>
           </ul>
-          <p>{{ appointment.description }}</p>
         </div>
       </div>
     </div>
-    <router-link to="/new-customer"> <a class="btn btn-secondary" href="#" role="button">Create a Appointment</a></router-link>
   </div>
 </template>
 
@@ -57,27 +44,69 @@ export default {
   },
   methods:{
     onlyDayFormat(date) {
-      const formatDate = dayjs(date).format('D')
-      return formatDate
+      return dayjs(date).format('D')
     },
     onlyMonthFormat(date) {
-      const formatDate = dayjs(date).format('MMM')
-      return formatDate
+      return dayjs(date).format('MMM')
     },
     dayNameFormat(date) {
-      const formatDate = dayjs(date).format('dddd')
-      return formatDate
+      return dayjs(date).format('dddd')
     },
     hoursAndMinutesFormat(date) {
-      const formatDate = dayjs(date).format('hh:mm A')
-      return formatDate
+      return dayjs(date).format('hh:mm A')
     },
   },
   computed: {
     userId() {
       return this.$store.state.user_id
+    },
+    sortedAppointments(){
+      function compare(a, b){
+        if (a.appointment_time_start < b.appointment_time_start)
+          return -1;
+        if (a.appointment_time_start > b.appointment_time_start)
+          return 1;
+        return 0;
+      }
+      return this.appointments.sort(compare);
     }
   }
 }
 </script>
 
+<style scoped>
+.appointment-list {
+  align-items: center;
+  background-color: #000;
+  display: compact;
+  justify-content: center;
+  height: 100%;
+  min-height: 100vh;
+}
+
+.row-striped {
+  background-color: #15172b;
+  border: 1px solid #3a3a47;
+  transition-duration: 1.5s;
+}
+.badge-secondary {
+  background-color: #65657b !important;
+}
+.text-color {
+  color: whitesmoke;
+}
+.icons {
+  color: #6a6a81;
+}
+a {
+  text-decoration: none;
+  color: whitesmoke;
+  transition-duration: 0.5s;
+}
+a:hover {
+  color: #65657b;
+}
+.row-striped:hover {
+  background-color: #383851;
+}
+</style>

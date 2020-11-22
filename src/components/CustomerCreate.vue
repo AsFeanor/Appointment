@@ -26,7 +26,7 @@
       </div>
       <div class="input-container ic2">
         <input v-model="customerPhone" id="phone" class="input" type="tel" placeholder=" " />
-        <div class="cut"></div>
+        <div class="cut cut-short"></div>
         <label for="phone" class="placeholder">Phone</label>
       </div>
     </form>
@@ -35,7 +35,7 @@
       <p class="subtitle">Let's add a appointment detail</p>
       <div class="input-container ic1">
         <input v-model="appointmentTitle" id="title" class="input" type="text" placeholder=" " />
-        <div class="cut"></div>
+        <div class="cut cut-short"></div>
         <label for="title" class="placeholder">Title</label>
       </div>
       <div class="input-container ic2">
@@ -58,7 +58,14 @@
     <form class="form">
       <h2 class="title">Add Location</h2>
       <div class="input-container ic1">
-        <Address></Address>
+        <div style="display: flex">
+          <button @click.prevent="calcRoute('DRIVING')" class="travels">Driving</button>
+          <button @click.prevent="calcRoute('WALKING')" class="travels">Walking</button>
+          <button @click.prevent="calcRoute('BICYCLING')" class="travels">Bicycling</button>
+          <button @click.prevent="calcRoute('TRANSIT')" class="travels">Transit</button>
+        </div>
+        <div class="google-map" :id="mapName"></div>
+        <div style="display: flex; color: white">Estimated time of arrival:  <p style="font-weight: bold; color: whitesmoke; text-decoration: underline">{{ zaman }}</p></div>
       </div>
     </form>
   </div>
@@ -66,15 +73,9 @@
 
 <script>
 import axios from 'axios';
-import Address from "@/components/Address";
-
-
 
 export default {
 name: "CustomerCreate",
-  components: {
-  Address
-  },
   data() {
   return {
     customerName: "",
@@ -86,6 +87,22 @@ name: "CustomerCreate",
     appointmentTimeEnd: "",
     appointmentDescription: "",
     selectedRoute: this.$route.params.user_id,
+    mapName: 'map',
+    markerCoordinates: {
+      latitude: 51.69285,
+      longitude: 0.0433281
+    },
+    lat: null,
+    lng: null,
+    map: null,
+    bounds: null,
+    markers: [],
+    directionsService: new google.maps.DirectionsService(),
+    directionsDisplay: new google.maps.DirectionsRenderer(),
+    startPoint: undefined,
+    endPoint: null,
+    appointmentLocation: "",
+    zaman: ""
   }
   },
   methods: {
@@ -99,7 +116,10 @@ name: "CustomerCreate",
         appointment_time_end: this.appointmentTimeEnd,
         title: this.appointmentTitle,
         description: this.appointmentDescription,
-        user_id: this.userID
+        user_id: this.userID,
+        lat: this.lat,
+        lng: this.lng,
+        location: this.appointmentLocation
       })
       .then((response) => {
         console.log(response);
@@ -116,6 +136,144 @@ name: "CustomerCreate",
         this.$router.push('/')
       }, 2000)
     },
+    changeCoords(latLng){
+      this.lat = latLng.lat();
+      this.lng = latLng.lng();
+    },
+    calcRoute(travels) {
+      const request = {
+        origin: this.startPoint,
+        destination: this.endPoint,
+        travelMode: travels
+      };
+      this.directionsService.route(request, (result, status) => {
+        if (status == 'OK') {
+          this.markers[0].setMap(null)
+          this.markers[1].setMap(null)
+          this.directionsDisplay.setDirections(result);
+          this.lat = result.request.destination.location.lat();
+          this.lng = result.request.destination.location.lng();
+          this.zaman = result.routes[0].legs[0].duration.text;
+          this.appointmentLocation = result.routes[0].legs[0].end_address;
+          console.log(result);
+        }
+      })
+    },
+    addMarker(location, index) {
+      let marker = new google.maps.Marker({
+        position: location,
+        map: this.map
+      });
+      this.markers[index] = marker
+      if (index){
+        this.map.fitBounds(this.bounds.extend(location))
+      }
+    }
+  },
+  mounted() {
+    this.bounds = new google.maps.LatLngBounds();
+    const coord = this.markerCoordinates
+    const position = new google.maps.LatLng(coord.latitude, coord.longitude);
+    const options = {
+      center: position,
+      zoom: 15,
+      styles: [
+        { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+        { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+        { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+        {
+          featureType: "administrative.locality",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#d59563" }],
+        },
+        {
+          featureType: "poi",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#d59563" }],
+        },
+        {
+          featureType: "poi.park",
+          elementType: "geometry",
+          stylers: [{ color: "#263c3f" }],
+        },
+        {
+          featureType: "poi.park",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#6b9a76" }],
+        },
+        {
+          featureType: "road",
+          elementType: "geometry",
+          stylers: [{ color: "#38414e" }],
+        },
+        {
+          featureType: "road",
+          elementType: "geometry.stroke",
+          stylers: [{ color: "#212a37" }],
+        },
+        {
+          featureType: "road",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#9ca5b3" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "geometry",
+          stylers: [{ color: "#746855" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "geometry.stroke",
+          stylers: [{ color: "#1f2835" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#f3d19c" }],
+        },
+        {
+          featureType: "transit",
+          elementType: "geometry",
+          stylers: [{ color: "#2f3948" }],
+        },
+        {
+          featureType: "transit.station",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#d59563" }],
+        },
+        {
+          featureType: "water",
+          elementType: "geometry",
+          stylers: [{ color: "#17263c" }],
+        },
+        {
+          featureType: "water",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#515c6d" }],
+        },
+        {
+          featureType: "water",
+          elementType: "labels.text.stroke",
+          stylers: [{ color: "#17263c" }],
+        },
+      ],
+    }
+    this.map = new google.maps.Map(document.getElementById(this.mapName), options);
+    google.maps.event.addListener(this.map, 'click', e => {
+      this.changeCoords(e.latLng);
+      this.addMarker(e.latLng, 1);
+      this.endPoint = e.latLng;
+      this.calcRoute('DRIVING');
+    });
+    google.maps.event.addListenerOnce(this.map, 'idle', e=>{
+      this.addMarker(position, 0)
+      this.startPoint = position;
+      if(this.endPoint){
+        this.addMarker(this.endPoint, 1);
+        this.calcRoute('DRIVING');
+      }
+    });
+    this.directionsDisplay.setMap(this.map);
   },
   computed: {
     userID() {
@@ -126,6 +284,21 @@ name: "CustomerCreate",
 </script>
 
 <style scoped>
+.google-map{
+  width: 100%;
+  height: 350px;
+  margin: 0 auto;
+  margin-top: 10px;
+  margin-bottom: 15px;
+  background: gray;
+}
+
+.travels{
+  background-color: #303245;
+  color: #65657b;
+  font-family: sans-serif;
+}
+
 .customer-create {
   align-items: center;
   background-color: #000;
@@ -140,6 +313,7 @@ name: "CustomerCreate",
   box-sizing: border-box;
   height: 580px;
   padding: 40px;
+  margin: 25px;
   width: 400px;
 }
 

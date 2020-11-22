@@ -5,7 +5,7 @@ import CustomerCreate from "@/components/CustomerCreate";
 import Register from "@/components/auth/Register";
 import Login from "@/components/auth/Login";
 import store from '../store'
-import Address from "@/components/Address";
+import AppointmentDetail from "@/components/AppointmentDetail";
 
 Vue.use(VueRouter)
 
@@ -23,28 +23,28 @@ const routes = [
     }
   },
   {
-    path: `/addresses`,
-    name: 'Address',
-    component: Address,
-    // beforeEnter(to, from, next){
-    //   if (store.getters.isAuthenticated) {
-    //     next()
-    //   }else {
-    //     next('/login')
-    //   }
-    // }
+    path: `/appointment/:appointment_id`,
+    name: 'AppointmentDetail',
+    component: AppointmentDetail,
+    beforeEnter(to, from, next){
+      if (store.getters.isAuthenticated) {
+        next()
+      }else {
+        next('/login')
+      }
+    }
   },
   {
     path: '/new-customer',
     name: 'CustomerCreate',
     component: CustomerCreate,
-    // beforeEnter(to, from, next){
-    //   if (store.getters.isAuthenticated) {
-    //     next()
-    //   }else {
-    //     next('/login')
-    //   }
-    // }
+    beforeEnter(to, from, next){
+      if (store.getters.isAuthenticated) {
+        next()
+      }else {
+        next('/login')
+      }
+    }
   },
   {
     path: '/register',
