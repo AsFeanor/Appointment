@@ -53,7 +53,7 @@
         <div class="cut"></div>
         <label for="description" class="placeholder">Description</label>
       </div>
-      <button @click.prevent="submitDelay" class="submit">Submit</button>
+      <button @click.prevent="submitDelay" class="submit">Update</button>
     </form>
     <form class="form">
       <h2 class="title">Add Location</h2>
@@ -129,8 +129,8 @@ export default {
     },
     submitDelay() {
       this.$toast.info({
-        title: 'Appointment Added',
-        message: 'Your appointment has been successfully added'
+        title: 'Appointment Updated',
+        message: 'Your appointment has been successfully updated'
       });
       setTimeout(() => {
         this.submitForm()
