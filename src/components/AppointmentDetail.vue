@@ -10,6 +10,7 @@
         <div class="appointment-info">Customer Phone: <p class="appointment-info-inline">{{ appointments.customer_phone }}</p></div>
         <div class="appointment-info">Start Time: <p class="appointment-info-inline">{{ appointments.appointment_time_start }}</p></div>
         <div class="appointment-info">End Time: <p class="appointment-info-inline">{{ appointments.appointment_time_end }}</p></div>
+        <router-link :to="`/appointment-update/${appointments.appointment_id}`"><button class="submit">Update</button></router-link>
       </div>
     </form>
     <div>
@@ -216,7 +217,7 @@ name: "AppointmentDetail",
   background-color: #15172b;
   border-radius: 20px;
   box-sizing: border-box;
-  height: 550px;
+  height: 580px;
   padding: 40px;
   margin: 25px;
   width: 400px;
@@ -327,12 +328,12 @@ name: "AppointmentDetail",
   cursor: pointer;
   font-size: 18px;
   height: 50px;
-  margin-top: 38px;
+  margin-top: 5px;
   outline: 0;
   text-align: center;
   width: 100%;
-  transition: background-color .2s ease-in-out, box-shadow .2s ease-in-out;
-  box-shadow: inset 0px 0px 0px 0px transparent;
+  transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  box-shadow: inset 0 0 0 0 transparent;
 }
 
 .submit:active {

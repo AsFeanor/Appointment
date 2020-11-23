@@ -6,6 +6,7 @@ import Register from "@/components/auth/Register";
 import Login from "@/components/auth/Login";
 import store from '../store'
 import AppointmentDetail from "@/components/AppointmentDetail";
+import AppointmentUpdate from "@/components/AppointmentUpdate";
 
 Vue.use(VueRouter)
 
@@ -26,6 +27,18 @@ const routes = [
     path: `/appointment/:appointment_id`,
     name: 'AppointmentDetail',
     component: AppointmentDetail,
+    beforeEnter(to, from, next){
+      if (store.getters.isAuthenticated) {
+        next()
+      }else {
+        next('/login')
+      }
+    }
+  },
+  {
+    path: `/appointment-update/:appointment_id`,
+    name: 'AppointmentUpdate',
+    component: AppointmentUpdate,
     beforeEnter(to, from, next){
       if (store.getters.isAuthenticated) {
         next()
