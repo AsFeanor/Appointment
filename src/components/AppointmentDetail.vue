@@ -10,7 +10,8 @@
         <div class="appointment-info">Customer Phone: <p class="appointment-info-inline">{{ appointments.customer_phone }}</p></div>
         <div class="appointment-info">Start Time: <p class="appointment-info-inline">{{ appointments.appointment_time_start }}</p></div>
         <div class="appointment-info">End Time: <p class="appointment-info-inline">{{ appointments.appointment_time_end }}</p></div>
-        <router-link :to="`/appointment-update/${appointments.appointment_id}`"><button class="submit">Update</button></router-link>
+        <router-link :to="`/appointment-update/${appointments.appointment_id}`"><button class="update">Update</button></router-link>
+        <button @click.prevent="deleteDelay" class="delete">Delete</button>
       </div>
     </form>
     <div>
@@ -62,6 +63,25 @@ name: "AppointmentDetail",
           .catch((e) => {
             this.appointments = console.log(e);
           })
+    },
+    deleteProperty() {
+      axios.delete('http://laravelapi.test/api/appointments/' + this.selectecRoute)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+    },
+    deleteDelay() {
+      this.$toast.error({
+        title: 'Appointment Deleted',
+        message: 'Your appointment has been successfully deleted'
+      });
+      setTimeout(() => {
+        this.deleteProperty()
+        this.$router.push('/')
+      }, 2000)
     },
     initMap(travels) {
       let dS = new google.maps.DirectionsService();
@@ -204,7 +224,7 @@ name: "AppointmentDetail",
 }
 
 .appointment-info {
-  color: #b1b1b1;
+  color: #bebebe;
   font-weight: bold;
 }
 
@@ -246,80 +266,11 @@ name: "AppointmentDetail",
   width: 100%;
 }
 
-.ic1 {
-  margin-top: 40px;
-}
-
 .ic2 {
   margin-top: 2px;
 }
 
-.input {
-  background-color: #303245;
-  border-radius: 12px;
-  border: 0;
-  box-sizing: border-box;
-  color: #eee;
-  font-size: 18px;
-  height: 100%;
-  outline: 0;
-  padding: 4px 20px 0;
-  width: 100%;
-  transition: box-shadow .2s ease-in-out;
-  box-shadow: inset 0px 0px 0px 0px transparent;
-}
-
-.input:focus {
-  box-shadow: inset 0px 0px 0px 2px #dc2f55;
-}
-
-.cut {
-  background-color: #15172b;
-  border-radius: 10px;
-  height: 20px;
-  left: 20px;
-  position: absolute;
-  top: -20px;
-  transform: translateY(0);
-  transition: transform 200ms;
-  width: 76px;
-}
-
-.cut-short {
-  width: 50px;
-}
-
-.input:focus ~ .cut,
-.input:not(:placeholder-shown) ~ .cut {
-  transform: translateY(8px);
-}
-
-.placeholder {
-  color: #65657b;
-  font-family: sans-serif;
-  left: 20px;
-  line-height: 14px;
-  pointer-events: none;
-  position: absolute;
-  transform-origin: 0 50%;
-  transition: transform 200ms, color 200ms;
-  top: 20px;
-}
-
-.input:focus ~ .placeholder,
-.input:not(:placeholder-shown) ~ .placeholder {
-  transform: translateY(-30px) translateX(10px) scale(0.75);
-}
-
-.input:not(:placeholder-shown) ~ .placeholder {
-  color: #808097;
-}
-
-.input:focus ~ .placeholder {
-  color: #dc2f55;
-}
-
-.submit {
+.update {
   background-color: #08d;
   border-radius: 12px;
   border: 0;
@@ -331,33 +282,63 @@ name: "AppointmentDetail",
   margin-top: 5px;
   outline: 0;
   text-align: center;
-  width: 100%;
+  width: 50%;
   transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   box-shadow: inset 0 0 0 0 transparent;
 }
 
-.submit:active {
+.update:active {
   background-color: #06b;
 }
 
-.submit:hover {
+.update:hover {
   background-color: #06b;
-  box-shadow: inset 0px 0px 0px 2px #ffffff;
+  box-shadow: inset 0 0 0 2px #ffffff;
 }
 
-.submit:focus {
+.update:focus {
   background-color: #06b;
-  box-shadow: inset 0px 0px 0px 2px #ffffff;
+  box-shadow: inset 0 0 0 2px #ffffff;
 }
 
+.delete {
+  background-color: #b80303;
+  border-radius: 12px;
+  border: 0;
+  box-sizing: border-box;
+  color: #eee;
+  cursor: pointer;
+  font-size: 18px;
+  height: 50px;
+  margin-top: 5px;
+  outline: 0;
+  text-align: center;
+  width: 50%;
+  transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  box-shadow: inset 0 0 0 0 transparent;
+}
 
-::-webkit-input-placeholder { /* Edge */
+.delete:active {
+  background-color: #a00202;
+}
+
+.delete:hover {
+  background-color: #a00202;
+  box-shadow: inset 0 0 0 2px #ffffff;
+}
+
+.delete:focus {
+  background-color: #a00202;
+  box-shadow: inset 0 0 0 2px #ffffff;
+}
+
+::-webkit-input-placeholder {
   color: #65657b;
   opacity: 0;
   transition: opacity .2s ease-in-out;
 }
 
-:-ms-input-placeholder { /* Internet Explorer 10-11 */
+:-ms-input-placeholder {
   color: #65657b;
   opacity: 0;
   transition: opacity .2s ease-in-out;
@@ -367,18 +348,5 @@ name: "AppointmentDetail",
   color: #65657b;
   opacity: 0;
   transition: opacity .2s ease-in-out;
-}
-
-
-input:focus::-webkit-input-placeholder { /* Edge */
-  opacity: 1;
-}
-
-input:focus:-ms-input-placeholder { /* Internet Explorer 10-11 */
-  opacity: 1;
-}
-
-input:focus::placeholder {
-  opacity: 1;
 }
 </style>

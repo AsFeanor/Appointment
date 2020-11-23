@@ -184,22 +184,22 @@ name: "Register",
 
 .submit:hover {
   background-color: #06b;
-  box-shadow: inset 0px 0px 0px 2px #ffffff;
+  box-shadow: inset 0 0 0 2px #ffffff;
 }
 
 .submit:focus {
   background-color: #06b;
-  box-shadow: inset 0px 0px 0px 2px #ffffff;
+  box-shadow: inset 0 0 0 2px #ffffff;
 }
 
 
-::-webkit-input-placeholder { /* Edge */
+::-webkit-input-placeholder {
   color: #65657b;
   opacity: 0;
   transition: opacity .2s ease-in-out;
 }
 
-:-ms-input-placeholder { /* Internet Explorer 10-11 */
+:-ms-input-placeholder {
   color: #65657b;
   opacity: 0;
   transition: opacity .2s ease-in-out;
@@ -212,11 +212,11 @@ name: "Register",
 }
 
 
-input:focus::-webkit-input-placeholder { /* Edge */
+input:focus::-webkit-input-placeholder {
   opacity: 1;
 }
 
-input:focus:-ms-input-placeholder { /* Internet Explorer 10-11 */
+input:focus:-ms-input-placeholder {
   opacity: 1;
 }
 

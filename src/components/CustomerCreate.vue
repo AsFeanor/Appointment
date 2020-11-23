@@ -14,13 +14,7 @@
         <label for="lastname" class="placeholder">Last name</label>
       </div>
       <div class="input-container ic2">
-        <input
-            v-model="customerEmail"
-            id="email"
-            class="input"
-            type="text"
-            placeholder="email@example.com"
-        />
+        <input v-model="customerEmail" id="email" class="input" type="text" placeholder="email@example.com"/>
         <div class="cut cut-short"></div>
         <label for="email" class="placeholder">Email</label>
       </div>
@@ -444,14 +438,12 @@ name: "CustomerCreate",
 }
 
 ::-webkit-input-placeholder {
-  /* Edge */
   color: #65657b;
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
 }
 
 :-ms-input-placeholder {
-  /* Internet Explorer 10-11 */
   color: #65657b;
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
@@ -464,12 +456,10 @@ name: "CustomerCreate",
 }
 
 input:focus::-webkit-input-placeholder {
-  /* Edge */
   opacity: 1;
 }
 
 input:focus:-ms-input-placeholder {
-  /* Internet Explorer 10-11 */
   opacity: 1;
 }
 

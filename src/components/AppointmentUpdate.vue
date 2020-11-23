@@ -14,13 +14,7 @@
         <label for="lastname" class="placeholder">Last name</label>
       </div>
       <div class="input-container ic2">
-        <input
-            v-model="customerEmail"
-            id="email"
-            class="input"
-            type="text"
-            placeholder="email@example.com"
-        />
+        <input v-model="customerEmail" id="email" class="input" type="text" placeholder="email@example.com"/>
         <div class="cut cut-short"></div>
         <label for="email" class="placeholder">Email</label>
       </div>

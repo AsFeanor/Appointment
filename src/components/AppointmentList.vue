@@ -89,23 +89,29 @@ export default {
   border: 1px solid #3a3a47;
   transition-duration: 1.5s;
 }
+
 .badge-secondary {
   background-color: #65657b !important;
 }
+
 .text-color {
   color: whitesmoke;
 }
+
 .icons {
   color: #6a6a81;
 }
+
 a {
   text-decoration: none;
   color: whitesmoke;
   transition-duration: 0.5s;
 }
+
 a:hover {
   color: #65657b;
 }
+
 .row-striped:hover {
   background-color: #383851;
 }
