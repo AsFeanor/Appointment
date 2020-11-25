@@ -21,26 +21,17 @@
 </template>
 
 <script>
-import axios from 'axios';
 import dayjs from 'dayjs';
 
 export default {
   name: 'AppointmentList',
   data() {
     return{
-      appointments: [],
       date: new Date(),
     }
   },
-  mounted() {
-    const userID = this.userId
-    axios.get(`http://laravelapi.test/api/user/`+ userID + `/appointments`)
-    .then((response) => {
-      this.appointments = response.data;
-    })
-    .catch((e) => {
-      this.appointments = console.log(e)
-    });
+  created() {
+    this.$store.dispatch('fetchAppointments');
   },
   methods:{
     onlyDayFormat(date) {
@@ -57,8 +48,8 @@ export default {
     },
   },
   computed: {
-    userId() {
-      return this.$store.state.user_id
+    appointments() {
+      return this.$store.state.appointments
     },
     sortedAppointments(){
       function compare(a, b){
@@ -70,7 +61,7 @@ export default {
       }
       return this.appointments.sort(compare);
     }
-  }
+  },
 }
 </script>
 

@@ -66,8 +66,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
 name: "CustomerCreate",
   data() {
@@ -101,7 +99,7 @@ name: "CustomerCreate",
   },
   methods: {
     submitForm() {
-      axios.post('http://laravelapi.test/api/appointments', {
+      this.$store.dispatch('addAppointment', {
         customer_name: this.customerName,
         customer_surname: this.customerSurname,
         customer_email: this.customerEmail,
@@ -115,20 +113,29 @@ name: "CustomerCreate",
         lng: this.lng,
         location: this.appointmentLocation
       })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((e) => console.log(e))
     },
     submitDelay() {
-      this.$toast.info({
-        title: 'Appointment Added',
-        message: 'Your appointment has been successfully added'
-      });
-      setTimeout(() => {
-        this.submitForm()
-        this.$router.push('/')
-      }, 2000)
+      const titleIsValid = !!this.appointmentTitle
+      const customerNameIsValid = !!this.customerName
+      const customerPhoneIsValid = !!this.customerPhone
+      const customerSurnameIsValid = !!this.customerSurname
+      const customerEmailIsValid = !!this.customerEmail
+      const appointmentIsValid = titleIsValid && customerNameIsValid && customerEmailIsValid && customerSurnameIsValid && customerPhoneIsValid
+      if (appointmentIsValid) {
+        this.$toast.info({
+          title: 'Appointment Added',
+          message: 'Your appointment has been successfully added'
+        });
+        setTimeout(() => {
+          this.submitForm()
+          this.$router.push('/')
+        }, 2000)
+      }else{
+        this.$toast.error({
+          title: 'Failed to Add Appointment',
+          message: 'Customer Data and Title is required.'
+        })
+      }
     },
     changeCoords(latLng){
       this.lat = latLng.lat();

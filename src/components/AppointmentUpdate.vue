@@ -4,22 +4,22 @@
       <h2 class="title">Add Customer</h2>
       <p class="subtitle">Let's add a customer infos</p>
       <div class="input-container ic1">
-        <input v-model="customerName" id="firstname" class="input" type="text" placeholder=" " />
+        <input v-model="appointments.customer_name" id="firstname" class="input" type="text" placeholder=" " />
         <div class="cut"></div>
         <label for="firstname" class="placeholder">First name</label>
       </div>
       <div class="input-container ic2">
-        <input v-model="customerSurname" id="lastname" class="input" type="text" placeholder=" " />
+        <input v-model="appointments.customer_surname" id="lastname" class="input" type="text" placeholder=" " />
         <div class="cut"></div>
         <label for="lastname" class="placeholder">Last name</label>
       </div>
       <div class="input-container ic2">
-        <input v-model="customerEmail" id="email" class="input" type="text" placeholder="email@example.com"/>
+        <input v-model="appointments.customer_email" id="email" class="input" type="text" placeholder="email@example.com"/>
         <div class="cut cut-short"></div>
         <label for="email" class="placeholder">Email</label>
       </div>
       <div class="input-container ic2">
-        <input v-model="customerPhone" id="phone" class="input" type="tel" placeholder=" " />
+        <input v-model="appointments.customer_phone" id="phone" class="input" type="tel" placeholder=" " />
         <div class="cut cut-short"></div>
         <label for="phone" class="placeholder">Phone</label>
       </div>
@@ -28,22 +28,22 @@
       <h2 class="title">Appointment</h2>
       <p class="subtitle">Let's add a appointment detail</p>
       <div class="input-container ic1">
-        <input v-model="appointmentTitle" id="title" class="input" type="text" placeholder=" " />
+        <input v-model="appointments.title" id="title" class="input" type="text" placeholder=" " />
         <div class="cut cut-short"></div>
         <label for="title" class="placeholder">Title</label>
       </div>
       <div class="input-container ic2">
-        <input v-model="appointmentTimeStart" id="time-start" class="input" type="datetime-local" placeholder=" " />
+        <input v-model="appointmentStart" id="time-start" class="input" type="datetime-local" placeholder=" " />
         <div class="cut"></div>
         <label for="time-start" class="placeholder">Start Time</label>
       </div>
       <div class="input-container ic2">
-        <input v-model="appointmentTimeEnd" id="time-end" class="input" type="datetime-local" placeholder=" " />
+        <input v-model="appointmentEnd" id="time-end" class="input" type="datetime-local" placeholder=" " />
         <div class="cut"></div>
         <label for="time-end" class="placeholder">End Time</label>
       </div>
       <div class="input-container ic2">
-        <textarea v-model="appointmentDescription" id="description" class="input" type="text" placeholder=" " />
+        <textarea v-model="appointments.description" id="description" class="input" type="text" placeholder=" " />
         <div class="cut"></div>
         <label for="description" class="placeholder">Description</label>
       </div>
@@ -73,14 +73,6 @@ export default {
   name: "AppointmentUpdate",
   data() {
     return {
-      customerName: "",
-      customerSurname: "",
-      customerEmail: "",
-      customerPhone: "",
-      appointmentTitle: "",
-      appointmentTimeStart: "",
-      appointmentTimeEnd: "",
-      appointmentDescription: "",
       selectedRoute: this.$route.params.appointment_id,
       mapName: 'map',
       markerCoordinates: {
@@ -102,34 +94,44 @@ export default {
   },
   methods: {
     submitForm() {
-      axios.put('http://laravelapi.test/api/appointments/' + this.selectedRoute, {
-        customer_name: this.customerName,
-        customer_surname: this.customerSurname,
-        customer_email: this.customerEmail,
-        customer_phone: this.customerPhone,
-        appointment_time_start: this.appointmentTimeStart,
-        appointment_time_end: this.appointmentTimeEnd,
-        title: this.appointmentTitle,
-        description: this.appointmentDescription,
+      this.$store.dispatch('updateAppointment', {
+        customer_name: this.appointments.customer_name,
+        customer_surname: this.appointments.customer_surname,
+        customer_email: this.appointments.customer_email,
+        customer_phone: this.appointments.customer_phone,
+        appointment_time_start: this.appointments.appointment_time_start,
+        appointment_time_end: this.appointments.appointment_time_end,
+        title: this.appointments.title,
+        description: this.appointments.description,
         user_id: this.userID,
         lat: this.lat,
         lng: this.lng,
-        location: this.appointmentLocation
+        location: this.appointmentLocation,
+        selectedRoute: this.selectedRoute
       })
-          .then((response) => {
-            console.log(response);
-          })
-          .catch((e) => console.log(e))
     },
     submitDelay() {
-      this.$toast.info({
-        title: 'Appointment Updated',
-        message: 'Your appointment has been successfully updated'
-      });
-      setTimeout(() => {
-        this.submitForm()
-        this.$router.push('/')
-      }, 2000)
+      const titleIsValid = !!this.appointments.title
+      const customerNameIsValid = !!this.appointments.customer_name
+      const customerPhoneIsValid = !!this.appointments.customer_phone
+      const customerSurnameIsValid = !!this.appointments.customer_surname
+      const customerEmailIsValid = !!this.appointments.customer_email
+      const appointmentIsValid = titleIsValid && customerNameIsValid && customerEmailIsValid && customerSurnameIsValid && customerPhoneIsValid
+      if (appointmentIsValid) {
+        this.$toast.info({
+          title: 'Appointment Updated',
+          message: 'Your appointment has been successfully updated'
+        });
+        setTimeout(() => {
+          this.submitForm()
+          this.$router.push('/')
+        }, 2000)
+      }else{
+        this.$toast.error({
+          title: 'Failed to Update Appointment',
+          message: 'Customer Data and Title is required.'
+        })
+      }
     },
     changeCoords(latLng){
       this.lat = latLng.lat();
@@ -166,20 +168,7 @@ export default {
     }
   },
   created() {
-    axios.get('http://laravelapi.test/api/appointments/' + this.selectedRoute)
-        .then((response) => {
-          this.customerName = response.data.customer_name
-          this.customerSurname = response.data.customer_surname
-          this.customerEmail = response.data.customer_email
-          this.customerPhone = response.data.customer_phone
-          this.appointmentTimeStart = dayjs(response.data.appointment_time_start).format('YYYY-MM-DDThh:mm')
-          this.appointmentTimeEnd = dayjs(response.data.appointment_time_end).format('YYYY-MM-DDThh:mm')
-          this.appointmentTitle = response.data.title
-          this.appointmentDescription = response.data.description
-        })
-        .catch((e) => {
-          console.log(e)
-        })
+    this.$store.dispatch('fetchFormattedAppointment', {selectedRoute: this.selectedRoute})
   },
   mounted() {
     this.bounds = new google.maps.LatLngBounds();
@@ -289,7 +278,16 @@ export default {
   computed: {
     userID() {
       return this.$store.state.user_id
-    }
+    },
+    appointments() {
+      return this.$store.state.appointment
+    },
+    appointmentStart() {
+      return this.$store.state.appointmentStart
+    },
+    appointmentEnd() {
+      return this.$store.state.appointmentEnd
+    },
   }
 }
 </script>

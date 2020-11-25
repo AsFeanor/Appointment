@@ -30,51 +30,34 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
 name: "AppointmentDetail",
   data() {
     return {
-      appointments: [],
       map: null,
       mapCenter: {lat: 51.69285, lng: 0.0433281},
-      property: {
-        lat: null,
-        lng: null,
-      },
       zaman: "",
       markersArray: [],
       selectecRoute: this.$route.params.appointment_id
     }
   },
-  created() {
+  mounted() {
     this.fetchProperty();
+  },
+  watch: {
+    appointments() {
+      this.initMap('DRIVING')
+    },
   },
   methods: {
     fetchProperty() {
-      axios.get('http://laravelapi.test/api/appointments/' + this.selectecRoute)
-          .then((response) => {
-            this.property.lat = parseFloat(response.data.lat);
-            this.property.lng = parseFloat(response.data.lng);
-            this.appointments = response.data;
-            this.initMap(`DRIVING`);
-          })
-          .catch((e) => {
-            this.appointments = console.log(e);
-          })
+      this.$store.dispatch('fetchAppointment', {selectedRoute: this.selectecRoute})
     },
     deleteProperty() {
-      axios.delete('http://laravelapi.test/api/appointments/' + this.selectecRoute)
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((e) => {
-        console.log(e)
-      })
+      this.$store.dispatch('deleteAppointment', {selectedRoute: this.selectecRoute})
     },
     deleteDelay() {
-      this.$toast.error({
+      this.$toast.warn({
         title: 'Appointment Deleted',
         message: 'Your appointment has been successfully deleted'
       });
@@ -87,7 +70,7 @@ name: "AppointmentDetail",
       let dS = new google.maps.DirectionsService();
       let dD = new google.maps.DirectionsRenderer();
       var vm = this
-      this.ourMap = new google.maps.Map(document.getElementById('map'),{
+      this.ourMap= new google.maps.Map(document.getElementById('map'),{
         center: this.mapCenter,
         zoom: 8,
         maxZoom: 20,
@@ -194,7 +177,14 @@ name: "AppointmentDetail",
         }
       })
     },
-
+  },
+  computed: {
+    appointments() {
+      return this.$store.state.appointment
+    },
+    property() {
+      return this.$store.state.property
+    }
   }
 }
 </script>
